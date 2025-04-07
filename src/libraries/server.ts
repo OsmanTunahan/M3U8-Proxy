@@ -1,9 +1,3 @@
-/**
- * @author Eltik. Credit to CORS proxy by Rob Wu.
- * @description Proxies m3u8 files.
- * @license MIT
- */
-
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -667,29 +661,28 @@ export async function proxyTs(url: string, headers: any, req, res: http.ServerRe
     try {
         if (forceHTTPS) {
             const proxy = https.request(options, (r) => {
+                // Set CORS headers
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader("Access-Control-Allow-Headers", "*");
+                res.setHeader("Access-Control-Allow-Methods", "*");
+                // Set content type and forward other headers
                 r.headers["content-type"] = "video/mp2t";
                 res.writeHead(r.statusCode ?? 200, r.headers);
-
-                r.pipe(res, {
-                    end: true,
-                });
+                r.pipe(res, { end: true });
             });
-
-            req.pipe(proxy, {
-                end: true,
-            });
+            req.pipe(proxy, { end: true });
         } else {
             const proxy = http.request(options, (r) => {
+                // Set CORS headers
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader("Access-Control-Allow-Headers", "*");
+                res.setHeader("Access-Control-Allow-Methods", "*");
+                // Set content type and forward other headers
                 r.headers["content-type"] = "video/mp2t";
                 res.writeHead(r.statusCode ?? 200, r.headers);
-
-                r.pipe(res, {
-                    end: true,
-                });
+                r.pipe(res, { end: true });
             });
-            req.pipe(proxy, {
-                end: true,
-            });
+            req.pipe(proxy, { end: true });
         }
     } catch (e: any) {
         res.writeHead(500);
